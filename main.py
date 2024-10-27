@@ -9,7 +9,6 @@ from PersonalModules.utilities import display, bellman_ford, display2, get_stat,
 from PersonalModules.greedy import greedy_algorithm
 from PersonalModules.vns import Variable_Neighborhood_Search
 from tabulate import tabulate
-        
 
 def create():
     free_slots = []

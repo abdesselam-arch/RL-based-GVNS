@@ -140,7 +140,7 @@ def initial_population(population_size, sinkless_sentinels, free_slots, max_hops
                     diagonal_nodes.add(free_slots[i])
                     diagonal_nodes.add(free_slots[j])
 
-        nodes_to_delete = random.sample(used_slots - diagonal_nodes, min(int(grid / 20), len(used_slots) - len(diagonal_nodes)))
+        nodes_to_delete = random.sample(list(used_slots - diagonal_nodes), min(int(grid / 20), len(used_slots) - len(diagonal_nodes)))
         for node in nodes_to_delete:
             for route in sentinel_solution:
                 if node in route:

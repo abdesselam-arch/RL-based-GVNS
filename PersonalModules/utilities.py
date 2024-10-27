@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import numpy as np
 from matplotlib.animation import FuncAnimation
-import matlab.engine
+#import matlab.engine
 import psutil
 
 def get_Diameter(sentinel_bman, cal_bman, mesh_size):

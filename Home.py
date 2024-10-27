@@ -12,6 +12,7 @@ from PersonalModules.Genetic import genetic_algorithm
 from PersonalModules.UCB_VND import UCB_VND
 from PersonalModules.VND import Variable_Neighborhood_Descent
 from PersonalModules.greedy import greedy_algorithm
+from PersonalModules.generalVNS import GVNS
 from PersonalModules.utilities import bellman_ford, dijkstra, display, get_Diameter, get_stat, len_free_slots, len_sinked_relays, plot_fitness_comparison, sentinel_relay
 from PersonalModules.vns import Variable_Neighborhood_Search
 from main import calculate_X, calculate_Y, create2, get_ordinal_number, save, save2
@@ -37,7 +38,7 @@ def createEverything(chosen_grid, sink_location, mesh_size):
 
     mesh_number = ((sink[0] - 10) // 20) + ((sink[1] - 10) // 20) * chosen_grid + 1
     print(f'Mesh number: {mesh_number}')
-    print(f'Sink coordinate: {sink}')
+    print(f'The coordinates of the sink are: {sink}')
 
     # Create sentinels
     sinkless_sentinels = [(x, 10) for x in range(10, grid + 10, 20)] + \
@@ -218,8 +219,9 @@ class MyApplication(QWidget):
             # display(grid, sink, sinked_relays, sinked_sentinels, title="Genetic Algorithm")
 
             self.output_text.append("\n   Starting Variable Neighborhood Descent algorithm...")
+            #sinked_relays, free_slots = GVNS(grid, sink, sinked_sentinels, sinked_relays, free_slots, custom_range, mesh_size, max_iterations=1, alpha=alpha, beta=beta)
             sinked_relays, free_slots = UCB_VND(grid, sink, sinked_sentinels, sinked_relays,
-                                                                 free_slots, custom_range, mesh_size, lmax=5, alpha=alpha, beta=beta)
+                                                                free_slots, custom_range, mesh_size, lmax=5, alpha=alpha, beta=beta)
             self.output_text.append("   Variable Neighborhood Descent algorithm finished execution successfully !")
 
             self.output_text.append("\n   Please wait until some calculations are finished...")
@@ -258,7 +260,7 @@ class MyApplication(QWidget):
             print(f'The final solution: {len_free_slots(grid, sinked_relays)} free slots remaining\n\n')
             distance_bman, sentinel_bman, cal_bman = dijkstra(grid, sink, sinked_relays, sinked_sentinels)
             print(f'The final sentinel list solution: {sentinel_bman}')
-            plot_fitness_comparison()
+            # plot_fitness_comparison()
 
         elif self.execution_type_radio_button_1.isChecked():
             Solutions_Data = []
