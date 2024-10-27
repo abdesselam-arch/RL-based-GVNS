@@ -15,8 +15,8 @@
 import math
 import random
 
-from matplotlib import pyplot as plt
-import numpy as np
+# from matplotlib import pyplot as plt
+# import numpy as np
 
 '''
 Visualizing the results

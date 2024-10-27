@@ -6,12 +6,12 @@ from multiprocessing import Process, Queue
 import os
 import time
 
-import matplotlib.pyplot as plt
-from matplotlib.ticker import MaxNLocator
-import numpy as np
-from matplotlib.animation import FuncAnimation
+#import matplotlib.pyplot as plt
+#from matplotlib.ticker import MaxNLocator
+#import numpy as np
+#from matplotlib.animation import FuncAnimation
 #import matlab.engine
-import psutil
+#import psutil
 
 def get_Diameter(sentinel_bman, cal_bman, mesh_size):
     sentinel_relays = sentinel_relay(sentinel_bman)

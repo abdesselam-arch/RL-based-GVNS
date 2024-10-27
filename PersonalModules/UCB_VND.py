@@ -319,7 +319,7 @@ def UCB_VND(grid, sink, sinked_sentinels, sinked_relays, free_slots, custom_rang
     
     #plot the histogram    
     # (toggle it when we want) plot_histogram(neighborhood_counts, max_iterations) 
-    plot_fitness_improvement(iteration_numbers, fitness_values, neighborhood_iteration)
+    # plot_fitness_improvement(iteration_numbers, fitness_values, neighborhood_iteration)
     # print_sequence_counts(sequence_counts)
     '''write_sequence_counts_to_json(grid_size=int(grid/mesh_size), sink_coordinates= sink, num_relays_deployed = len_sinked_relays(sinked_relays),
                                   diameter=get_Diameter(sentinel_bman, cal_bman, mesh_size), sequence_counts = sequence_counts, fitness= best_solution_relays,

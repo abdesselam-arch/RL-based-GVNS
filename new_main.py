@@ -2,7 +2,7 @@ import math
 import time
 
 from PersonalModules.Genetic import genetic_algorithm
-from PersonalModules.UCB_VND import UCB_VND
+# from PersonalModules.UCB_VND import UCB_VND
 from PersonalModules.generalVNS import GVNS
 from PersonalModules.utilities import bellman_ford, display, get_Diameter, get_stat, len_sinked_relays
 
@@ -118,10 +118,10 @@ def main():
             ga_avg_performance += performance_before
             ga_avg_diameter += ga_diameter
 
-            display(grid, sink, sinked_relays, sinked_sentinels, title="Genetic Algorithm")
+            #display(grid, sink, sinked_relays, sinked_sentinels, title="Genetic Algorithm")
             print('Starting the UCB_VND algorithm now!!')
 
-            sinked_relays, free_slots = GVNS(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, max_iterations=1, alpha=0.5, beta=0.5)
+            sinked_relays, free_slots = GVNS(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, max_iterations=1, alpha=0.6, beta=0.4)
             #sinked_relays, free_slots = UCB_VND(grid, sink, sinked_sentinels, sinked_relays,
             #                                                    free_slots, 30, 20, lmax=5, alpha=0.5, beta=0.5)
             print("   Upper Confidence Bounde + Variable Neighborhood Descent algorithm finished execution successfully !")
@@ -134,7 +134,7 @@ def main():
             diameter_after = get_Diameter(sentinel_bman, cal_bman, mesh_size = 20)
             relays_after = len_sinked_relays(sinked_relays)
 
-            display(grid, sink, sinked_relays, sinked_sentinels, title="UCB VND Algorithm")
+            #display(grid, sink, sinked_relays, sinked_sentinels, title="UCB VND Algorithm")
             print("   Calculations are done !")
 
             print(f"\nFitness BEFORE: {performance_before}")
