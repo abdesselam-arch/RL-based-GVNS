@@ -6,8 +6,8 @@ from PersonalModules.Genetic import genetic_algorithm
 from PersonalModules.VND import Variable_Neighborhood_Descent
 
 from PersonalModules.utilities import display, bellman_ford, display2, get_stat, bars_chart, bars_chart2
-from PersonalModules.greedy import greedy_algorithm
-from PersonalModules.vns import Variable_Neighborhood_Search
+# from PersonalModules.greedy import greedy_algorithm
+#from PersonalModules.vns import Variable_Neighborhood_Search
 from tabulate import tabulate
 
 def create():

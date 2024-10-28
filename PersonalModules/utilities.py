@@ -11,7 +11,7 @@ import time
 #import numpy as np
 #from matplotlib.animation import FuncAnimation
 #import matlab.engine
-#import psutil
+import psutil
 
 def get_Diameter(sentinel_bman, cal_bman, mesh_size):
     sentinel_relays = sentinel_relay(sentinel_bman)

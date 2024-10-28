@@ -16,7 +16,7 @@ import math
 import random
 
 # from matplotlib import pyplot as plt
-# import numpy as np
+import numpy as np
 
 '''
 Visualizing the results
