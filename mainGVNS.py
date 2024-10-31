@@ -7,17 +7,16 @@ from PersonalModules.generalVNS import GVNS
 from PersonalModules.utilities import bellman_ford, display, get_Diameter, get_stat, len_sinked_relays
 
 
-def create():
+def create(chosen_grid, sink_location, ):
     free_slots = []
 
     # Create a grid
-    chosen_grid = int(input("Choose your grid size: "))
+    # chosen_grid = int(input("Choose your grid size: "))
     print("You chose the grid's size to be: ", chosen_grid, "*", chosen_grid)
     grid = chosen_grid * 20
 
     # Create a sink
-    sink_location = int(
-        input("\nDo you want the sink in the middle of the grid? (Type 0 to choose a custom location) "))
+    # sink_location = int(input("\nDo you want the sink in the middle of the grid? (Type 0 to choose a custom location) "))
     if sink_location == 0:
         sink_X_Axis = int(input("Enter the X coordinate of the sink."))
         sink_Y_Axis = int(input("Now enter the Y coordinate of the sink."))
@@ -62,16 +61,49 @@ def get_ordinal_number(n):
     tf = eng.isprime(x)
     return tf'''
 
+def initial_solution(grid, sink, sinkless_sentinels, free_slots, max_hops_number):
+    genetic_free_slots = []
+
+    if grid == 10:
+        with open("Initial solutions/genetic_sinked_sentinels_10.txt", "r") as f:
+            genetic_sinked_sentinels = eval(f.read())
+        with open("Initial solutions/genetic_sinked_relays_10.txt", "r") as f:
+            genetic_sinked_relays = eval(f.read())
+    elif grid == 20:
+        with open("Initial solutions/genetic_sinked_sentinels_20.txt", "r") as f:
+            genetic_sinked_sentinels = eval(f.read())
+        with open("Initial solutions/genetic_sinked_relays_20.txt", "r") as f:
+            genetic_sinked_relays = eval(f.read())
+    elif grid == 30:
+        with open("Initial solutions/genetic_sinked_sentinels_30.txt", "r") as f:
+            genetic_sinked_sentinels = eval(f.read())
+        with open("Initial solutions/genetic_sinked_relays_30.txt", "r") as f:
+            genetic_sinked_relays = eval(f.read())
+    elif grid == 40:
+        with open("Initial solutions/genetic_sinked_sentinels_40.txt", "r") as f:
+            genetic_sinked_sentinels = eval(f.read())
+        with open("Initial solutions/genetic_sinked_relays_40.txt", "r") as f:
+            genetic_sinked_relays = eval(f.read())
+    elif grid == 50:
+        with open("Initial solutions/genetic_sinked_sentinels_50.txt", "r") as f:
+            genetic_sinked_sentinels = eval(f.read())
+        with open("Initial solutions/genetic_sinked_relays_50.txt", "r") as f:
+            genetic_sinked_relays = eval(f.read())
+    else:
+        genetic_sinked_sentinels, genetic_sinked_relays, genetic_free_slots, Finished, ERROR = genetic_algorithm(5, 12, sink, sinkless_sentinels, free_slots, max_hops_number+1, custom_range = 30, mesh_size = 20)
+
+    return genetic_sinked_sentinels, genetic_sinked_relays, genetic_free_slots
+
 def main():
     get_in = True
     # Create everything
     if get_in:
-        grid, sink, sinkless_sentinels, free_slots = create()
+        # If needed to change the grid size or sink location, change the parameters here
+        grid, sink, sinkless_sentinels, free_slots = create(10, 1)
         max_hops_number = grid
 
-    user_input = int(
-        input("     Type 1 for multiple times VNS.\n"))
-    
+    #user_input = int(input("     Type 1 for multiple times VNS.\n"))
+    user_input = 1
 
     if user_input == 1:
         executions = 1
@@ -84,21 +116,28 @@ def main():
         ga_avg_performance = 0
         ga_avg_diameter = 0
 
-        print("You chose Multiple times Greedy !\n")
-        user_input = int(input("How many Greedy executions you want to perform?"))
+        #print("You chose Multiple times Greedy !\n")
+        #user_input = int(input("How many Greedy executions you want to perform?"))
+        # Change the user_input value to change the number of simulations (executions)
+        user_input = 10
+
+        '''
+        Change the value of Gvns_or_RLGVNS to change the algorithm to execute
+        1: executes GVNS
+        any other value: executes RL-based GVNS (UCB_GVNS)
+        '''
+        Gvns_or_RLGVNS = 1
 
         simulation_start_time = time.time()
         execution_times = []
         while executions <= user_input:
-            print("\n # This is the ", get_ordinal_number(executions), " Genetic + UCB_VND execution.")
+            print("\n # This is the ", get_ordinal_number(executions), " execution.")
 
             start_time = time.time()
             # Generate the initial solution using greedy algorithm
-            print("\n   Starting Genetic algorithm...")
-            genetic_sinked_sentinels, genetic_sinked_relays, genetic_free_slots, Finished, ERROR = genetic_algorithm(5, 12, sink, sinkless_sentinels, free_slots, max_hops_number+1, custom_range = 30, mesh_size = 20)
-
-    
-            print("   Greedy algorithm finished execution successfully !")
+            print("\nFixed Initial solution given by genetic ")
+            genetic_sinked_sentinels, genetic_sinked_relays, genetic_free_slots = initial_solution(grid/20, sink, sinkless_sentinels, free_slots, max_hops_number+1)
+            print("---------------------------------------")
 
             # Get the performance before VNS, perform VNS then Get the performance after VNS
             print("\n   Please wait until some calculations are finished...")
@@ -119,12 +158,14 @@ def main():
             ga_avg_diameter += ga_diameter
 
             display(grid, sink, sinked_relays, sinked_sentinels, title="Genetic Algorithm")
-            print('Starting the UCB_VND algorithm now!!')
+            print('Starting the main algorithm now!!')
 
-            sinked_relays, free_slots = GVNS(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, max_iterations=1, alpha=0.5, beta=0.5)
-            #sinked_relays, free_slots = UCB_VND(grid, sink, sinked_sentinels, sinked_relays,
-            #                                                    free_slots, 30, 20, lmax=5, alpha=0.5, beta=0.5)
-            print("   Upper Confidence Bounde + Variable Neighborhood Descent algorithm finished execution successfully !")
+            if Gvns_or_RLGVNS == 1:
+                sinked_relays, free_slots = GVNS(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, max_iterations=1, alpha=0.5, beta=0.5)
+                print("   General Variable Neighborhood Search algorithm finished execution successfully !")
+            else:    
+                sinked_relays, free_slots = UCB_VND(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, lmax=5, alpha=0.5, beta=0.5)
+                print("   Upper Confidence Bounde + General Variable Neighborhood Search algorithm finished execution successfully !")
 
             print("\n   Please wait until some calculations are finished...")
             distance_bman, sentinel_bman, cal_bman = bellman_ford(grid, free_slots, sink, sinked_relays, sinked_sentinels)
@@ -164,7 +205,7 @@ def main():
             minutes, remainder = divmod(remainder, 60)
             time_string = f"{hours:02.0f}H_{minutes:02.0f}M_{remainder:02.0f}S"
 
-            print(f'GA UCB_VND Execution time: {time_string}')
+            print(f'Execution time: {time_string}')
 
         simulation_end_time = time.time()
         # GET TIME
@@ -182,14 +223,17 @@ def main():
 
         print('\n\nSimulation Results:\n')
 
-        print('GA Results AVERAGE:')
+        print('Initial GA Results AVERAGE:')
 
         print(f'Relays AVERAGE: {math.ceil(ga_avg_relays / user_input)}')
         print(f'Hops AVERAGE: {math.ceil(ga_avg_hops / user_input)}')
         print(f'Performance AVERAGE: {ga_avg_performance / user_input}')
         print(f'Diameter AVERAGE: {math.ceil(ga_avg_diameter / user_input)}')
-            
-        print('\nUCB_VND Results AVERAGE:')
+        
+        if Gvns_or_RLGVNS == 1:
+            print('\nGVNS Results AVERAGE:')
+        else:
+            print('\nUCB_GVNS Results AVERAGE:')
 
         print(f'Relays AVERAGE: {math.ceil(vns_avg_relays / user_input)}')
         print(f'Hops AVERAGE: {math.ceil(vns_avg_hops / user_input)}')
@@ -204,7 +248,5 @@ def main():
         print(f'\nExecution time AVERAGE: {avg_time_string}')
         print(f'Total execution time: {time_string}')
    
-
-
 if __name__ == '__main__':
     main()

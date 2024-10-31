@@ -24,7 +24,7 @@ def crossover(parent1, parent2):
             child.append(gene1)
         else:
             child.append(gene2)
-    print('Success! Crossover operation complete')
+    #print('Success! Crossover operation complete')
     return child
 
 def mutate(solution, free_slots, custom_range):
@@ -35,7 +35,7 @@ def mutate(solution, free_slots, custom_range):
 
     # Check if free_slots is empty
     if not (free_slots):
-        print("No mutation!")
+        #print("No mutation!")
         return mutated_solution
 
     # Randomly select a slot
@@ -55,7 +55,7 @@ def mutate(solution, free_slots, custom_range):
     else:
         nearby_candidates = [node for node in free_slots if math.dist(current_node, node) < custom_range]
 
-    print('Success! Mutation operation complete')
+    #print('Success! Mutation operation complete')
     return mutated_solution
 
 def evaluate(solution, sink, sinked_relays, grid, free_slots, sinked_sentinels, mesh_size):
@@ -206,8 +206,8 @@ def genetic_algorithm(population_size, generations, sink, sinkless_sentinels, fr
     min_hop_counts = calculate_min_hop_count(sink, sinked_relays, mesh_size)
     sinked_relays = list(zip(sinked_relays, min_hop_counts))
 
-    print('\nSinked Sentinels\n',sinked_sentinels)
-    print('\nSinked Relays\n', sinked_relays)
+    #print('\nSinked Sentinels\n',sinked_sentinels)
+    #print('\nSinked Relays\n', sinked_relays)
 
     Finished = True  # Placeholder, update based on your termination criteria
     ERROR = False  # Placeholder, update based on error conditions

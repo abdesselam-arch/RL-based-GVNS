@@ -219,9 +219,9 @@ class MyApplication(QWidget):
             # display(grid, sink, sinked_relays, sinked_sentinels, title="Genetic Algorithm")
 
             self.output_text.append("\n   Starting Variable Neighborhood Descent algorithm...")
-            #sinked_relays, free_slots = GVNS(grid, sink, sinked_sentinels, sinked_relays, free_slots, custom_range, mesh_size, max_iterations=1, alpha=alpha, beta=beta)
-            sinked_relays, free_slots = UCB_VND(grid, sink, sinked_sentinels, sinked_relays,
-                                                                free_slots, custom_range, mesh_size, lmax=5, alpha=alpha, beta=beta)
+            sinked_relays, free_slots = GVNS(grid, sink, sinked_sentinels, sinked_relays, free_slots, custom_range, mesh_size, max_iterations=1, alpha=alpha, beta=beta)
+            #sinked_relays, free_slots = UCB_VND(grid, sink, sinked_sentinels, sinked_relays,
+            #                                                    free_slots, custom_range, mesh_size, lmax=5, alpha=alpha, beta=beta)
             self.output_text.append("   Variable Neighborhood Descent algorithm finished execution successfully !")
 
             self.output_text.append("\n   Please wait until some calculations are finished...")
