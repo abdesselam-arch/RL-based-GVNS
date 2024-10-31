@@ -164,7 +164,7 @@ def main():
                 sinked_relays, free_slots = GVNS(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, max_iterations=1, alpha=0.5, beta=0.5)
                 print("   General Variable Neighborhood Search algorithm finished execution successfully !")
             else:    
-                sinked_relays, free_slots = UCB_VND(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, lmax=5, alpha=0.5, beta=0.5)
+                sinked_relays, free_slots = UCB_VND(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, lmax=5, alpha=0.55, beta=0.5)
                 print("   Upper Confidence Bounde + General Variable Neighborhood Search algorithm finished execution successfully !")
 
             print("\n   Please wait until some calculations are finished...")
