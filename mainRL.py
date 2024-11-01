@@ -4,7 +4,7 @@ import time
 from PersonalModules.Genetic import genetic_algorithm
 from PersonalModules.UCB_VND import UCB_VND
 from PersonalModules.generalVNS import GVNS
-from PersonalModules.utilities import bellman_ford, display, get_Diameter, get_stat, len_sinked_relays
+from PersonalModules.utilities import bellman_ford, dijkstra, display, get_Diameter, get_stat, len_sinked_relays
 
 
 def create(chosen_grid, sink_location, ):
@@ -119,7 +119,7 @@ def main():
         #print("You chose Multiple times Greedy !\n")
         #user_input = int(input("How many Greedy executions you want to perform?"))
         # Change the user_input value to change the number of simulations (executions)
-        user_input = 10
+        user_input = 2
 
         '''
         Change the value of Gvns_or_RLGVNS to change the algorithm to execute
@@ -157,25 +157,27 @@ def main():
             ga_avg_performance += performance_before
             ga_avg_diameter += ga_diameter
 
-            display(grid, sink, sinked_relays, sinked_sentinels, title="Genetic Algorithm")
+            # display(grid, sink, sinked_relays, sinked_sentinels, title="Genetic Algorithm")
             print('Starting the main algorithm now!!')
 
             if Gvns_or_RLGVNS == 1:
                 sinked_relays, free_slots = GVNS(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, max_iterations=1, alpha=0.5, beta=0.5)
                 print("   General Variable Neighborhood Search algorithm finished execution successfully !")
             else:    
-                sinked_relays, free_slots = UCB_VND(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, lmax=5, alpha=0.5, beta=0.5)
+                sinked_relays, free_slots = UCB_VND(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, lmax=5, alpha=0.55, beta=0.5)
                 print("   Upper Confidence Bounde + General Variable Neighborhood Search algorithm finished execution successfully !")
 
             print("\n   Please wait until some calculations are finished...")
-            distance_bman, sentinel_bman, cal_bman = bellman_ford(grid, free_slots, sink, sinked_relays, sinked_sentinels)
+            #distance_bman, sentinel_bman, cal_bman = bellman_ford(grid, free_slots, sink, sinked_relays, sinked_sentinels)
+            distance_bman, sentinel_bman, cal_bman = dijkstra(grid, sink, sinked_relays, sinked_sentinels)
+
             
             performance_after, relays_after, hops_after = get_stat(sinked_relays, sentinel_bman, cal_bman, grid, free_slots, sink, sinked_sentinels, mesh_size = 20, alpha = 0.7, beta = 0.3)
             
             diameter_after = get_Diameter(sentinel_bman, cal_bman, mesh_size = 20)
             relays_after = len_sinked_relays(sinked_relays)
 
-            display(grid, sink, sinked_relays, sinked_sentinels, title="UCB VND Algorithm")
+            # display(grid, sink, sinked_relays, sinked_sentinels, title="UCB VND Algorithm")
             print("   Calculations are done !")
 
             print(f"\nFitness BEFORE: {performance_before}")
@@ -243,7 +245,7 @@ def main():
         avg_execution_time = total_time / user_input
         avg_hours, avg_remainder = divmod(avg_execution_time, 3600)
         avg_minutes, avg_remainder = divmod(avg_remainder, 60)
-        avg_time_string = f"{avg_hours:02.0f}H_{avg_minutes:02.0f}M_{avg_remainder:02.0f}       "
+        avg_time_string = f"{avg_hours:02.0f}H_{avg_minutes:02.0f}M_{avg_remainder:02.0f}"
 
         print(f'\nExecution time AVERAGE: {avg_time_string}')
         print(f'Total execution time: {time_string}')

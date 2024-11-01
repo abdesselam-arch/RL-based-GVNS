@@ -234,8 +234,10 @@ def UCB_VND(grid, sink, sinked_sentinels, sinked_relays, free_slots, custom_rang
 
     # Shaking operation GVNS
     n_free_slots, n_sinked_relays, action, remember_used_relays = shaking(sinked_sentinels, sinked_relays, free_slots, custom_range, sink, mesh_size)
-    # while (iteration <= max_iterations) and (consecutive_errors <= 6):
-    while consecutive_errors <= 1:
+    
+    #while (iteration <= max_iterations) and (consecutive_errors <= 6):
+    while (iteration <= max_iterations):
+    # while consecutive_errors <= 1:
         i = 0  # Neighbor counter
         improvement = True  # Flag to indicate improvement
         previous = epsilon_constraints(grid, free_slots, sink, sinked_relays, sinked_sentinels, 0, mesh_size, alpha, beta)
@@ -314,7 +316,8 @@ def UCB_VND(grid, sink, sinked_sentinels, sinked_relays, free_slots, custom_rang
         qualities[l] += Upper_Confidence_Bound.Credit_Assignment(improvement, previous, after, l)
         print(f'\n {l+1} Neighborhood Previous Fitness: {previous}, After Fitness: {after}')
         print(f'\nThere are {len_sinked_relays(sinked_relays)} relays deployed')
-        print(f'There are {len_free_slots(grid, sinked_relays)} free slots remaining\n\n')
+        print(f'There are {len_free_slots(grid, sinked_relays)} free slots remaining')
+        print(f'The diameter: {get_Diameter(sentinel_bman, cal_bman, mesh_size=20)}')
         
     
     #plot the histogram    
