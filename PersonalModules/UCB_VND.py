@@ -327,6 +327,6 @@ def UCB_VND(grid, sink, sinked_sentinels, sinked_relays, free_slots, custom_rang
     '''write_sequence_counts_to_json(grid_size=int(grid/mesh_size), sink_coordinates= sink, num_relays_deployed = len_sinked_relays(sinked_relays),
                                   diameter=get_Diameter(sentinel_bman, cal_bman, mesh_size), sequence_counts = sequence_counts, fitness= best_solution_relays,
                                   filename= f'{int(grid/mesh_size)}x{int(grid/mesh_size)} sequence counts', filepath = "C:/Users/nouri/OneDrive/Desktop/Papers/Python program files/Python program files/Neighborhoods sequence")'''
-    print(f'neighborhood at every iteration: {neighborhood_iteration}')
+    # print(f'neighborhood at every iteration: {neighborhood_iteration}')
 
     return optimal_sinked_relays, optimal_free_slots

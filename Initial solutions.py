@@ -34,27 +34,30 @@ def create(chosen_grid, sink_location, ):
                 free_slots.append((x, y))
     return grid, sink, sinkless_sentinels, free_slots
 
-
 def main():
 
-    grid, sink, sinkless_sentinels, free_slots = create(50, 1)
+    grid, sink, sinkless_sentinels, free_slots = create(35, 1)
     max_hops_number = grid
 
     print("\n   Fixed Initial solution given by genetic")
-    genetic_sinked_sentinels, genetic_sinked_relays, genetic_free_slots, Finished, ERROR = genetic_algorithm(5, 2, sink, sinkless_sentinels, free_slots, max_hops_number+1, custom_range = 30, mesh_size = 20)
-
+    # genetic_sinked_sentinels, genetic_sinked_relays, genetic_free_slots, Finished, ERROR = genetic_algorithm(2, 0, sink, sinkless_sentinels, free_slots, max_hops_number+1, custom_range = 30, mesh_size = 20)
+    
+    with open("Initial solutions/genetic_sinked_sentinels_35.txt", "r") as f:
+        genetic_sinked_sentinels = eval(f.read())
+    with open("Initial solutions/genetic_sinked_relays_35.txt", "r") as f:
+        genetic_sinked_relays = eval(f.read())
+    genetic_free_slots = []
+    
     print(f'genetic_sinked_sentinels = {genetic_sinked_sentinels}')
     print(f'genetic_sinked_relays = {genetic_sinked_relays}')
     print(f'genetic_free_slots = {genetic_free_slots}')
 
     display(grid, sink, genetic_sinked_relays, genetic_sinked_sentinels, title="Genetic Algorithm")
 
-    with open("genetic_sinked_sentinels_40.txt", "w") as f:
+    '''with open("genetic_sinked_sentinels_35.txt", "w") as f:
         f.write(str(genetic_sinked_sentinels))
-    with open("genetic_sinked_relays_40.txt", "w") as f:
-        f.write(str(genetic_sinked_relays))
-    with open("genetic_free_slots_40.txt", "w") as f:
-        f.write(str(genetic_free_slots))
+    with open("genetic_sinked_relays_35.txt", "w") as f:
+        f.write(str(genetic_sinked_relays))'''
 
 if __name__ == '__main__':
     main()

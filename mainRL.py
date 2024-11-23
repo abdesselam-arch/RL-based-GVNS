@@ -7,7 +7,7 @@ from PersonalModules.generalVNS import GVNS
 from PersonalModules.utilities import bellman_ford, dijkstra, display, get_Diameter, get_stat, len_sinked_relays
 
 
-def create(chosen_grid, sink_location, ):
+def create(chosen_grid, sink_location):
     free_slots = []
 
     # Create a grid
@@ -99,7 +99,7 @@ def main():
     # Create everything
     if get_in:
         # If needed to change the grid size or sink location, change the parameters here
-        grid, sink, sinkless_sentinels, free_slots = create(10, 1)
+        grid, sink, sinkless_sentinels, free_slots = create(12, 1)
         max_hops_number = grid
 
     #user_input = int(input("     Type 1 for multiple times VNS.\n"))
@@ -119,7 +119,7 @@ def main():
         #print("You chose Multiple times Greedy !\n")
         #user_input = int(input("How many Greedy executions you want to perform?"))
         # Change the user_input value to change the number of simulations (executions)
-        user_input = 2
+        user_input = 1
 
         '''
         Change the value of Gvns_or_RLGVNS to change the algorithm to execute
@@ -172,7 +172,7 @@ def main():
             distance_bman, sentinel_bman, cal_bman = dijkstra(grid, sink, sinked_relays, sinked_sentinels)
 
             
-            performance_after, relays_after, hops_after = get_stat(sinked_relays, sentinel_bman, cal_bman, grid, free_slots, sink, sinked_sentinels, mesh_size = 20, alpha = 0.7, beta = 0.3)
+            performance_after, relays_after, hops_after = get_stat(sinked_relays, sentinel_bman, cal_bman, grid, free_slots, sink, sinked_sentinels, mesh_size = 20, alpha = 0.5, beta = 0.5)
             
             diameter_after = get_Diameter(sentinel_bman, cal_bman, mesh_size = 20)
             relays_after = len_sinked_relays(sinked_relays)
