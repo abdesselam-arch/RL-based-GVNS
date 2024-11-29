@@ -2,10 +2,10 @@ import random
 import math
 from PersonalModules.utilities import epsilon_constraints, dijkstra, get_Diameter
 
-def GVNS(grid, sink, sinked_sentinels, sinked_relays, free_slots, custom_range, mesh_size, max_iterations, alpha, beta):
+def GVNS(grid, sink, sinked_sentinels, sinked_relays, free_slots, custom_range, mesh_size, max_iterations, alpha, beta, gen_diameter):
     best_solution = sinked_relays.copy()
     print(f"Starting GVNS with max_iterations: {max_iterations}")
-    best_fitness = epsilon_constraints(grid, free_slots, sink, sinked_relays, sinked_sentinels, 0, mesh_size, alpha, beta)
+    best_fitness = epsilon_constraints(grid, free_slots, sink, sinked_relays, sinked_sentinels, 0, mesh_size, alpha, beta,  gen_diameter)
     print('----------------------------------')
     # Shaking
     # temp_free_slots, temp_sinked_relays = shaking(sinked_sentinels, best_solution, free_slots.copy(), custom_range, sink, mesh_size, k=5)
@@ -31,10 +31,10 @@ def GVNS(grid, sink, sinked_sentinels, sinked_relays, free_slots, custom_range, 
         while k <= 5:  # 5 neighborhoods
             print(f'The iteration number is: {iteration}')
             # Local search
-            temp_free_slots, temp_sinked_relays = variable_neighborhood_descent(grid, sink, sinked_sentinels, temp_sinked_relays, temp_free_slots, custom_range, mesh_size, alpha, beta)
+            temp_free_slots, temp_sinked_relays = variable_neighborhood_descent(grid, sink, sinked_sentinels, temp_sinked_relays, temp_free_slots, custom_range, mesh_size, alpha, beta, gen_diameter)
             
             # Evaluate the new solution
-            new_fitness = epsilon_constraints(grid, temp_free_slots, sink, temp_sinked_relays, sinked_sentinels, 0, mesh_size, alpha, beta)
+            new_fitness = epsilon_constraints(grid, temp_free_slots, sink, temp_sinked_relays, sinked_sentinels, 0, mesh_size, alpha, beta, gen_diameter)
             
             if new_fitness < best_fitness:
                 best_solution = temp_sinked_relays.copy()
@@ -80,14 +80,14 @@ def shaking(sinked_sentinels, sinked_relays, free_slots, custom_range, sink, mes
             free_slots, sinked_relays, _, _ = add_relay_next_to_sentinel(sinked_sentinels, sink, sinked_relays, free_slots, [], custom_range, mesh_size)
     return free_slots, sinked_relays
 
-def variable_neighborhood_descent(grid, sink, sinked_sentinels, sinked_relays, free_slots, custom_range, mesh_size, alpha, beta):
+def variable_neighborhood_descent(grid, sink, sinked_sentinels, sinked_relays, free_slots, custom_range, mesh_size, alpha, beta, gen_diameter):
     improvement = True
     while improvement:
         improvement = False
         for neighborhood in range(1, 6):
             temp_free_slots, temp_sinked_relays = apply_neighborhood(neighborhood, sinked_sentinels, sink, sinked_relays.copy(), free_slots.copy(), custom_range, mesh_size)
             
-            if is_better_solution(grid, temp_free_slots, sink, temp_sinked_relays, sinked_sentinels, free_slots, sinked_relays, mesh_size, alpha, beta):
+            if is_better_solution(grid, temp_free_slots, sink, temp_sinked_relays, sinked_sentinels, free_slots, sinked_relays, mesh_size, alpha, beta, gen_diameter):
                 free_slots, sinked_relays = temp_free_slots, temp_sinked_relays
                 improvement = True
                 break
@@ -111,9 +111,9 @@ def apply_neighborhood(neighborhood, sinked_sentinels, sink, sinked_relays, free
         print('Add a relay next to a sentinel with no relay neighbors.')
         return add_relay_next_to_sentinel(sinked_sentinels, sink, sinked_relays, free_slots, [], custom_range, mesh_size)[:2]
 
-def is_better_solution(grid, new_free_slots, sink, new_sinked_relays, sinked_sentinels, old_free_slots, old_sinked_relays, mesh_size, alpha, beta):
-    new_fitness = epsilon_constraints(grid, new_free_slots, sink, new_sinked_relays, sinked_sentinels, 0, mesh_size, alpha, beta)
-    old_fitness = epsilon_constraints(grid, old_free_slots, sink, old_sinked_relays, sinked_sentinels, 0, mesh_size, alpha, beta)
+def is_better_solution(grid, new_free_slots, sink, new_sinked_relays, sinked_sentinels, old_free_slots, old_sinked_relays, mesh_size, alpha, beta, gen_diameter):
+    new_fitness = epsilon_constraints(grid, new_free_slots, sink, new_sinked_relays, sinked_sentinels, 0, mesh_size, alpha, beta, gen_diameter)
+    old_fitness = epsilon_constraints(grid, old_free_slots, sink, old_sinked_relays, sinked_sentinels, 0, mesh_size, alpha, beta, gen_diameter)
     
     if new_fitness < old_fitness:
         distance_bman, sentinel_bman, _ = dijkstra(grid, sink, new_sinked_relays, sinked_sentinels)

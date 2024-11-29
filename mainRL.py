@@ -143,7 +143,7 @@ def main():
             print("\n   Please wait until some calculations are finished...")
             distance_bman, sentinel_bman, genetic_cal_bman = bellman_ford(grid, genetic_free_slots, sink, genetic_sinked_relays,
                                                                     genetic_sinked_sentinels)
-            performance_before, relays_before, hops_before = get_stat(genetic_sinked_relays, sentinel_bman, genetic_cal_bman, grid, genetic_free_slots, sink, genetic_sinked_sentinels, mesh_size = 20, alpha = 0.5, beta = 0.5)
+            performance_before, relays_before, hops_before = get_stat(genetic_sinked_relays, sentinel_bman, genetic_cal_bman, grid, genetic_free_slots, sink, genetic_sinked_sentinels, mesh_size = 20, alpha = 0.5, beta = 0.5, gen_diameter=int(grid/20))
             diameter_before = get_Diameter(sentinel_bman, genetic_cal_bman, mesh_size = 20)
             print("   Calculations are done !")
 
@@ -163,8 +163,8 @@ def main():
             if Gvns_or_RLGVNS == 1:
                 sinked_relays, free_slots = GVNS(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, max_iterations=1, alpha=0.5, beta=0.5)
                 print("   General Variable Neighborhood Search algorithm finished execution successfully !")
-            else:    
-                sinked_relays, free_slots = UCB_VND(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, lmax=5, alpha=0.55, beta=0.5)
+            else:
+                sinked_relays, free_slots = UCB_VND(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, lmax=5, alpha=0.55, beta=0.5, gen_diameter=ga_diameter)
                 print("   Upper Confidence Bounde + General Variable Neighborhood Search algorithm finished execution successfully !")
 
             print("\n   Please wait until some calculations are finished...")
@@ -172,7 +172,7 @@ def main():
             distance_bman, sentinel_bman, cal_bman = dijkstra(grid, sink, sinked_relays, sinked_sentinels)
 
             
-            performance_after, relays_after, hops_after = get_stat(sinked_relays, sentinel_bman, cal_bman, grid, free_slots, sink, sinked_sentinels, mesh_size = 20, alpha = 0.5, beta = 0.5)
+            performance_after, relays_after, hops_after = get_stat(sinked_relays, sentinel_bman, cal_bman, grid, free_slots, sink, sinked_sentinels, mesh_size = 20, alpha = 0.5, beta = 0.5, gen_diameter=ga_diameter)
             
             diameter_after = get_Diameter(sentinel_bman, cal_bman, mesh_size = 20)
             relays_after = len_sinked_relays(sinked_relays)

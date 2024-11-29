@@ -197,7 +197,7 @@ def hop_count(sink, relay, sentinels, mesh_size):
 
 @monitor_performance
 # UCB1 - Variable Neighborhood Descent ---------------------------------------------------------------------------
-def UCB_VND(grid, sink, sinked_sentinels, sinked_relays, free_slots, custom_range, mesh_size, lmax, alpha, beta):
+def UCB_VND(grid, sink, sinked_sentinels, sinked_relays, free_slots, custom_range, mesh_size, lmax, alpha, beta, gen_diameter):
     l = 1  # Neighborhood counter
     qualities = [0.0] * lmax
     iteration = 0
@@ -228,7 +228,7 @@ def UCB_VND(grid, sink, sinked_sentinels, sinked_relays, free_slots, custom_rang
     optimal_sinked_relays, optimal_free_slots = None, None
     best_solution_relays = float('inf')
     
-    previous = epsilon_constraints(grid, free_slots, sink, sinked_relays, sinked_sentinels, 0, mesh_size, alpha, beta)
+    previous = epsilon_constraints(grid, free_slots, sink, sinked_relays, sinked_sentinels, 0, mesh_size, alpha, beta, gen_diameter)
     for l in range(lmax):
         qualities[l] += previous
 
@@ -240,7 +240,7 @@ def UCB_VND(grid, sink, sinked_sentinels, sinked_relays, free_slots, custom_rang
     # while consecutive_errors <= 1:
         i = 0  # Neighbor counter
         improvement = True  # Flag to indicate improvement
-        previous = epsilon_constraints(grid, free_slots, sink, sinked_relays, sinked_sentinels, 0, mesh_size, alpha, beta)
+        previous = epsilon_constraints(grid, free_slots, sink, sinked_relays, sinked_sentinels, 0, mesh_size, alpha, beta, gen_diameter)
         
         l, neighborhood_count = Upper_Confidence_Bound.UCB1_policy(lmax, qualities, exploration_factor, total_number_actions)
         neighborhood_counts[l] += 1
@@ -271,7 +271,7 @@ def UCB_VND(grid, sink, sinked_sentinels, sinked_relays, free_slots, custom_rang
                 n_free_slots, n_sinked_relays, action, remember_used_relays = add_relay_next_to_sentinel(sinked_sentinels, sink, sinked_relays, free_slots, [], custom_range, mesh_size)
                 print('Relay added next to sentinel with no neighbors')
             
-            after = epsilon_constraints(grid, n_free_slots, sink, n_sinked_relays, sinked_sentinels, 0, mesh_size, alpha, beta)
+            after = epsilon_constraints(grid, n_free_slots, sink, n_sinked_relays, sinked_sentinels, 0, mesh_size, alpha, beta, gen_diameter)
             total_number_actions += 1
 
             distance_bman, sentinel_bman, cal_bman = dijkstra(grid, sink, sinked_relays, sinked_sentinels)

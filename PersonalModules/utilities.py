@@ -632,27 +632,27 @@ def sentinel_relay(sentinel_bman):
         sentinel_relays.append(relay)
     return sentinel_relays
 
-def get_stat(sinked_relays, sentinel_bman, cal_bman, grid, free_slots, sink, sinked_sentinels, mesh_size, alpha, beta):
+def get_stat(sinked_relays, sentinel_bman, cal_bman, grid, free_slots, sink, sinked_sentinels, mesh_size, alpha, beta, gen_diameter):
     sentinel_relays = sentinel_relay(sentinel_bman)
     if not sentinel_relays:  # Check if sentinel distances list is empty (all unreachable)
         calculate_performance = 0
         calculate_hops = 0
     else:
         #calculate_performance = (0.5 * len(sinked_relays)) + (0.5 * cal_bman)
-        calculate_performance = epsilon_constraints(grid, free_slots, sink, sinked_relays, sinked_sentinels, cal_bman, mesh_size,  alpha, beta)
+        calculate_performance = epsilon_constraints(grid, free_slots, sink, sinked_relays, sinked_sentinels, cal_bman, mesh_size,  alpha, beta, gen_diameter)
         calculate_hops = sum(sentinel_relays) / len(sentinel_relays)
     calculate_relays = len_sinked_relays(sinked_relays)
     return calculate_performance, calculate_relays, calculate_hops
 
-def epsilon_constraints(grid, free_slots, sink, sinked_relays, sinked_sentinels, cal_bman, mesh_size, alpha, beta): 
+def epsilon_constraints(grid, free_slots, sink, sinked_relays, sinked_sentinels, cal_bman, mesh_size, alpha, beta, gen_diameter): 
 
     distance_bman, sentinel_bman, cal_bman = dijkstra(grid, sink, sinked_relays, sinked_sentinels)
-    epsilon = int(grid / 20)
+    # epsilon = int(grid / 20)
     
     print(f'\nSentinel dijkstra: {sentinel_bman}\n')
     performance = ((alpha * len_sinked_relays(sinked_relays)) + (beta * (get_Diameter(sentinel_bman, cal_bman, mesh_size))))
 
-    if (999 in sentinel_bman) or (get_Diameter(sentinel_bman, cal_bman, mesh_size) > epsilon ):
+    if (999 in sentinel_bman) or (get_Diameter(sentinel_bman, cal_bman, mesh_size) > gen_diameter ):
         return performance + 999
     else:
         return performance
