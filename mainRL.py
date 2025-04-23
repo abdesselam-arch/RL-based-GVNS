@@ -99,7 +99,7 @@ def main():
     # Create everything
     if get_in:
         # If needed to change the grid size or sink location, change the parameters here
-        grid, sink, sinkless_sentinels, free_slots = create(12, 1)
+        grid, sink, sinkless_sentinels, free_slots = create(20, 1)
         max_hops_number = grid
 
     #user_input = int(input("     Type 1 for multiple times VNS.\n"))

@@ -90,7 +90,7 @@ def initial_solution(grid, sink, sinkless_sentinels, free_slots, max_hops_number
         with open("Initial solutions/genetic_sinked_relays_50.txt", "r") as f:
             genetic_sinked_relays = eval(f.read())
     else:
-        genetic_sinked_sentinels, genetic_sinked_relays, genetic_free_slots, Finished, ERROR = genetic_algorithm(5, 12, sink, sinkless_sentinels, free_slots, max_hops_number+1, custom_range = 30, mesh_size = 20)
+        genetic_sinked_sentinels, genetic_sinked_relays, genetic_free_slots, Finished, ERROR = genetic_algorithm(15, 25, sink, sinkless_sentinels, free_slots, max_hops_number+1, custom_range = 30, mesh_size = 20)
 
     return genetic_sinked_sentinels, genetic_sinked_relays, genetic_free_slots
 
@@ -99,7 +99,7 @@ def main():
     # Create everything
     if get_in:
         # If needed to change the grid size or sink location, change the parameters here
-        grid, sink, sinkless_sentinels, free_slots = create(12, 1)
+        grid, sink, sinkless_sentinels, free_slots = create(11, 1)
         max_hops_number = grid
 
     #user_input = int(input("     Type 1 for multiple times VNS.\n"))
@@ -159,7 +159,9 @@ def main():
             ga_avg_performance += performance_before
             ga_avg_diameter += ga_diameter
 
-            # display(grid, sink, sinked_relays, sinked_sentinels, title="Genetic Algorithm")
+            GA_end_time = time.time()
+
+            #display(grid, sink, sinked_relays, sinked_sentinels, title="Genetic Algorithm")
             print('Starting the main algorithm now!!')
 
             if Gvns_or_RLGVNS == 1:
@@ -202,12 +204,19 @@ def main():
 
             end_time = time.time()
             # GET TIME
+            total_time = int(GA_end_time - start_time)
+            execution_times.append(total_time)
+            hours, remainder = divmod(total_time, 3600)
+            minutes, remainder = divmod(remainder, 60)
+            GA_time_string = f"{hours:02.0f}H_{minutes:02.0f}M_{remainder:02.0f}S"
+
             total_time = int(end_time - start_time)
             execution_times.append(total_time)
             hours, remainder = divmod(total_time, 3600)
             minutes, remainder = divmod(remainder, 60)
             time_string = f"{hours:02.0f}H_{minutes:02.0f}M_{remainder:02.0f}S"
 
+            print(f'GA Execution time: {GA_time_string}')
             print(f'Execution time: {time_string}')
 
         simulation_end_time = time.time()
@@ -248,6 +257,7 @@ def main():
         avg_minutes, avg_remainder = divmod(avg_remainder, 60)
         avg_time_string = f"{avg_hours:02.0f}H_{avg_minutes:02.0f}M_{avg_remainder:02.0f}       "
 
+        print(f'\nGenetic Execution time: {GA_time_string}')
         print(f'\nExecution time AVERAGE: {avg_time_string}')
         print(f'Total execution time: {time_string}')
    
