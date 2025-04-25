@@ -157,6 +157,8 @@ def main():
             ga_avg_performance += performance_before
             ga_avg_diameter += ga_diameter
 
+            GA_end_time = time.time()
+
             # display(grid, sink, sinked_relays, sinked_sentinels, title="Genetic Algorithm")
             print('Starting the main algorithm now!!')
 
@@ -201,12 +203,19 @@ def main():
 
             end_time = time.time()
             # GET TIME
+            total_time = int(GA_end_time - start_time)
+            execution_times.append(total_time)
+            hours, remainder = divmod(total_time, 3600)
+            minutes, remainder = divmod(remainder, 60)
+            GA_time_string = f"{hours:02.0f}H_{minutes:02.0f}M_{remainder:02.0f}S"
+
             total_time = int(end_time - start_time)
             execution_times.append(total_time)
             hours, remainder = divmod(total_time, 3600)
             minutes, remainder = divmod(remainder, 60)
             time_string = f"{hours:02.0f}H_{minutes:02.0f}M_{remainder:02.0f}S"
 
+            print(f'GA Execution time: {GA_time_string}')
             print(f'Execution time: {time_string}')
 
         simulation_end_time = time.time()
@@ -245,8 +254,9 @@ def main():
         avg_execution_time = total_time / user_input
         avg_hours, avg_remainder = divmod(avg_execution_time, 3600)
         avg_minutes, avg_remainder = divmod(avg_remainder, 60)
-        avg_time_string = f"{avg_hours:02.0f}H_{avg_minutes:02.0f}M_{avg_remainder:02.0f}"
+        avg_time_string = f"{avg_hours:02.0f}H_{avg_minutes:02.0f}M_{avg_remainder:02.0f}       "
 
+        print(f'\nGenetic Execution time: {GA_time_string}')
         print(f'\nExecution time AVERAGE: {avg_time_string}')
         print(f'Total execution time: {time_string}')
    
