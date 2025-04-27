@@ -1,5 +1,6 @@
 import math
 import time
+import os
 
 from PersonalModules.Genetic import genetic_algorithm
 from PersonalModules.UCB_VND import UCB_VND
@@ -7,7 +8,7 @@ from PersonalModules.generalVNS import GVNS
 from PersonalModules.utilities import bellman_ford, dijkstra, display, get_Diameter, get_stat, len_sinked_relays
 
 
-def create(chosen_grid, sink_location):
+def create(chosen_grid, sink_location, ):
     free_slots = []
 
     # Create a grid
@@ -64,33 +65,31 @@ def get_ordinal_number(n):
 def initial_solution(grid, sink, sinkless_sentinels, free_slots, max_hops_number):
     genetic_free_slots = []
 
-    if grid == 10:
-        with open("Initial solutions/genetic_sinked_sentinels_10.txt", "r") as f:
+    folder_path = "Initial solutions"
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+
+    sentinel_file = os.path.join(folder_path, f"genetic_sinked_sentinels_{grid}.txt")
+    relay_file = os.path.join(folder_path, f"genetic_sinked_relays_{grid}.txt")
+
+    # Check if both sentinel and relay files exist
+    if os.path.exists(sentinel_file) and os.path.exists(relay_file):
+        with open(sentinel_file, "r") as f:
             genetic_sinked_sentinels = eval(f.read())
-        with open("Initial solutions/genetic_sinked_relays_10.txt", "r") as f:
-            genetic_sinked_relays = eval(f.read())
-    elif grid == 20:
-        with open("Initial solutions/genetic_sinked_sentinels_20.txt", "r") as f:
-            genetic_sinked_sentinels = eval(f.read())
-        with open("Initial solutions/genetic_sinked_relays_20.txt", "r") as f:
-            genetic_sinked_relays = eval(f.read())
-    elif grid == 30:
-        with open("Initial solutions/genetic_sinked_sentinels_30.txt", "r") as f:
-            genetic_sinked_sentinels = eval(f.read())
-        with open("Initial solutions/genetic_sinked_relays_30.txt", "r") as f:
-            genetic_sinked_relays = eval(f.read())
-    elif grid == 40:
-        with open("Initial solutions/genetic_sinked_sentinels_40.txt", "r") as f:
-            genetic_sinked_sentinels = eval(f.read())
-        with open("Initial solutions/genetic_sinked_relays_40.txt", "r") as f:
-            genetic_sinked_relays = eval(f.read())
-    elif grid == 50:
-        with open("Initial solutions/genetic_sinked_sentinels_50.txt", "r") as f:
-            genetic_sinked_sentinels = eval(f.read())
-        with open("Initial solutions/genetic_sinked_relays_50.txt", "r") as f:
+        with open(relay_file, "r") as f:
             genetic_sinked_relays = eval(f.read())
     else:
-        genetic_sinked_sentinels, genetic_sinked_relays, genetic_free_slots, Finished, ERROR = genetic_algorithm(5, 12, sink, sinkless_sentinels, free_slots, max_hops_number+1, custom_range = 30, mesh_size = 20)
+        # If files do not exist, generate new initial solution
+        genetic_sinked_sentinels, genetic_sinked_relays, genetic_free_slots, Finished, ERROR = genetic_algorithm(
+            15, 25, sink, sinkless_sentinels, free_slots, max_hops_number + 1,
+            custom_range=30, mesh_size=20
+        )
+        
+        # Save generated solution
+        with open(sentinel_file, "w") as f:
+            f.write(str(genetic_sinked_sentinels))
+        with open(relay_file, "w") as f:
+            f.write(str(genetic_sinked_relays))
 
     return genetic_sinked_sentinels, genetic_sinked_relays, genetic_free_slots
 
@@ -99,7 +98,7 @@ def main():
     # Create everything
     if get_in:
         # If needed to change the grid size or sink location, change the parameters here
-        grid, sink, sinkless_sentinels, free_slots = create(20, 1)
+        grid, sink, sinkless_sentinels, free_slots = create(11, 1)
         max_hops_number = grid
 
     #user_input = int(input("     Type 1 for multiple times VNS.\n"))
@@ -141,8 +140,10 @@ def main():
 
             # Get the performance before VNS, perform VNS then Get the performance after VNS
             print("\n   Please wait until some calculations are finished...")
-            distance_bman, sentinel_bman, genetic_cal_bman = bellman_ford(grid, genetic_free_slots, sink, genetic_sinked_relays,
-                                                                    genetic_sinked_sentinels)
+            #distance_bman, sentinel_bman, genetic_cal_bman = bellman_ford(grid, genetic_free_slots, sink, genetic_sinked_relays,
+            #                                                        genetic_sinked_sentinels)
+            distance_bman, sentinel_bman, genetic_cal_bman = dijkstra(grid, sink, genetic_sinked_relays, genetic_sinked_sentinels)
+
             performance_before, relays_before, hops_before = get_stat(genetic_sinked_relays, sentinel_bman, genetic_cal_bman, grid, genetic_free_slots, sink, genetic_sinked_sentinels, mesh_size = 20, alpha = 0.5, beta = 0.5, gen_diameter=int(grid/20))
             diameter_before = get_Diameter(sentinel_bman, genetic_cal_bman, mesh_size = 20)
             print("   Calculations are done !")
@@ -159,21 +160,20 @@ def main():
 
             GA_end_time = time.time()
 
-            # display(grid, sink, sinked_relays, sinked_sentinels, title="Genetic Algorithm")
+            #display(grid, sink, sinked_relays, sinked_sentinels, title="Genetic Algorithm")
             print('Starting the main algorithm now!!')
 
             if Gvns_or_RLGVNS == 1:
-                sinked_relays, free_slots = GVNS(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, max_iterations=1, alpha=0.5, beta=0.5)
+                sinked_relays, free_slots = GVNS(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, max_iterations=1, alpha=0.5, beta=0.5, gen_diameter=ga_diameter)
                 print("   General Variable Neighborhood Search algorithm finished execution successfully !")
-            else:
-                sinked_relays, free_slots = UCB_VND(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, lmax=5, alpha=0.55, beta=0.5, gen_diameter=ga_diameter)
+            else:    
+                sinked_relays, free_slots = UCB_VND(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, lmax=5, alpha=0.5, beta=0.5)
                 print("   Upper Confidence Bounde + General Variable Neighborhood Search algorithm finished execution successfully !")
 
             print("\n   Please wait until some calculations are finished...")
             #distance_bman, sentinel_bman, cal_bman = bellman_ford(grid, free_slots, sink, sinked_relays, sinked_sentinels)
-            distance_bman, sentinel_bman, cal_bman = dijkstra(grid, sink, sinked_relays, sinked_sentinels)
-
             
+            distance_bman, sentinel_bman, cal_bman = dijkstra(grid, sink, sinked_relays, sinked_sentinels)
             performance_after, relays_after, hops_after = get_stat(sinked_relays, sentinel_bman, cal_bman, grid, free_slots, sink, sinked_sentinels, mesh_size = 20, alpha = 0.5, beta = 0.5, gen_diameter=ga_diameter)
             
             diameter_after = get_Diameter(sentinel_bman, cal_bman, mesh_size = 20)

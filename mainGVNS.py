@@ -1,5 +1,6 @@
 import math
 import time
+import os
 
 from PersonalModules.Genetic import genetic_algorithm
 from PersonalModules.UCB_VND import UCB_VND
@@ -64,33 +65,31 @@ def get_ordinal_number(n):
 def initial_solution(grid, sink, sinkless_sentinels, free_slots, max_hops_number):
     genetic_free_slots = []
 
-    if grid == 10:
-        with open("Initial solutions/genetic_sinked_sentinels_10.txt", "r") as f:
+    folder_path = "Initial solutions"
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+
+    sentinel_file = os.path.join(folder_path, f"genetic_sinked_sentinels_{grid}.txt")
+    relay_file = os.path.join(folder_path, f"genetic_sinked_relays_{grid}.txt")
+
+    # Check if both sentinel and relay files exist
+    if os.path.exists(sentinel_file) and os.path.exists(relay_file):
+        with open(sentinel_file, "r") as f:
             genetic_sinked_sentinels = eval(f.read())
-        with open("Initial solutions/genetic_sinked_relays_10.txt", "r") as f:
-            genetic_sinked_relays = eval(f.read())
-    elif grid == 20:
-        with open("Initial solutions/genetic_sinked_sentinels_20.txt", "r") as f:
-            genetic_sinked_sentinels = eval(f.read())
-        with open("Initial solutions/genetic_sinked_relays_20.txt", "r") as f:
-            genetic_sinked_relays = eval(f.read())
-    elif grid == 30:
-        with open("Initial solutions/genetic_sinked_sentinels_30.txt", "r") as f:
-            genetic_sinked_sentinels = eval(f.read())
-        with open("Initial solutions/genetic_sinked_relays_30.txt", "r") as f:
-            genetic_sinked_relays = eval(f.read())
-    elif grid == 40:
-        with open("Initial solutions/genetic_sinked_sentinels_40.txt", "r") as f:
-            genetic_sinked_sentinels = eval(f.read())
-        with open("Initial solutions/genetic_sinked_relays_40.txt", "r") as f:
-            genetic_sinked_relays = eval(f.read())
-    elif grid == 50:
-        with open("Initial solutions/genetic_sinked_sentinels_50.txt", "r") as f:
-            genetic_sinked_sentinels = eval(f.read())
-        with open("Initial solutions/genetic_sinked_relays_50.txt", "r") as f:
+        with open(relay_file, "r") as f:
             genetic_sinked_relays = eval(f.read())
     else:
-        genetic_sinked_sentinels, genetic_sinked_relays, genetic_free_slots, Finished, ERROR = genetic_algorithm(15, 25, sink, sinkless_sentinels, free_slots, max_hops_number+1, custom_range = 30, mesh_size = 20)
+        # If files do not exist, generate new initial solution
+        genetic_sinked_sentinels, genetic_sinked_relays, genetic_free_slots, Finished, ERROR = genetic_algorithm(
+            15, 25, sink, sinkless_sentinels, free_slots, max_hops_number + 1,
+            custom_range=30, mesh_size=20
+        )
+        
+        # Save generated solution
+        with open(sentinel_file, "w") as f:
+            f.write(str(genetic_sinked_sentinels))
+        with open(relay_file, "w") as f:
+            f.write(str(genetic_sinked_relays))
 
     return genetic_sinked_sentinels, genetic_sinked_relays, genetic_free_slots
 
