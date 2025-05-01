@@ -69,8 +69,8 @@ def initial_solution(grid, sink, sinkless_sentinels, free_slots, max_hops_number
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
-    sentinel_file = os.path.join(folder_path, f"genetic_sinked_sentinels_{grid}.txt")
-    relay_file = os.path.join(folder_path, f"genetic_sinked_relays_{grid}.txt")
+    sentinel_file = os.path.join(folder_path, f"genetic_sinked_sentinels_{int(grid)}.txt")
+    relay_file = os.path.join(folder_path, f"genetic_sinked_relays_{int(grid)}.txt")
 
     # Check if both sentinel and relay files exist
     if os.path.exists(sentinel_file) and os.path.exists(relay_file):
@@ -98,7 +98,7 @@ def main():
     # Create everything
     if get_in:
         # If needed to change the grid size or sink location, change the parameters here
-        grid, sink, sinkless_sentinels, free_slots = create(11, 1)
+        grid, sink, sinkless_sentinels, free_slots = create(15, 1)
         max_hops_number = grid
 
     #user_input = int(input("     Type 1 for multiple times VNS.\n"))
