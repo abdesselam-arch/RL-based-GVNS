@@ -1,3 +1,4 @@
+import json
 import math
 import time
 import os
@@ -71,26 +72,52 @@ def initial_solution(grid, sink, sinkless_sentinels, free_slots, max_hops_number
 
     sentinel_file = os.path.join(folder_path, f"genetic_sinked_sentinels_{int(grid)}.txt")
     relay_file = os.path.join(folder_path, f"genetic_sinked_relays_{int(grid)}.txt")
+    stats_file = os.path.join(folder_path, f"genetic_statistics_{int(grid)}.json")
 
-    # Check if both sentinel and relay files exist
-    if os.path.exists(sentinel_file) and os.path.exists(relay_file):
+    # Check if all three files exist
+    if os.path.exists(sentinel_file) and os.path.exists(relay_file) and os.path.exists(stats_file):
         with open(sentinel_file, "r") as f:
             genetic_sinked_sentinels = eval(f.read())
         with open(relay_file, "r") as f:
             genetic_sinked_relays = eval(f.read())
+        with open(stats_file, "r") as f:
+            stats = json.load(f)
+        print("Loaded existing initial solution and statistics.")
     else:
         # If files do not exist, generate new initial solution
+        start_time = time.time()
+
         genetic_sinked_sentinels, genetic_sinked_relays, genetic_free_slots, Finished, ERROR = genetic_algorithm(
-            15, 25, sink, sinkless_sentinels, free_slots, max_hops_number + 1,
+            15, 10, sink, sinkless_sentinels, free_slots, max_hops_number + 1,
             custom_range=30, mesh_size=20
         )
-        
-        # Save generated solution
+
+        total_seconds = int(time.time() - start_time)
+
+        # Convert seconds to H:M:S
+        hours, remainder = divmod(total_seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        time_string = f"{hours:02.0f}H_{minutes:02.0f}M_{seconds:02.0f}S"
+
+        # Save the sentinel and relay lists
         with open(sentinel_file, "w") as f:
             f.write(str(genetic_sinked_sentinels))
         with open(relay_file, "w") as f:
             f.write(str(genetic_sinked_relays))
 
+        # Save the statistics as JSON
+        stats = {
+            "number_of_sentinels": len(genetic_sinked_sentinels),
+            "number_of_relays": len(genetic_sinked_relays),
+            "grid_size": int(grid),
+            "execution_time": time_string,
+        }
+        with open(stats_file, "w") as f:
+            json.dump(stats, f, indent=4)
+
+        print("New initial solution generated and statistics saved.")
+
+    print(f"Initial Solution Stats -> Sentinels: {stats['number_of_sentinels']}, Relays: {stats['number_of_relays']}, Execution Time: {stats['execution_time']}")
     return genetic_sinked_sentinels, genetic_sinked_relays, genetic_free_slots
 
 def main():
@@ -98,7 +125,7 @@ def main():
     # Create everything
     if get_in:
         # If needed to change the grid size or sink location, change the parameters here
-        grid, sink, sinkless_sentinels, free_slots = create(15, 1)
+        grid, sink, sinkless_sentinels, free_slots = create(17, 1)
         max_hops_number = grid
 
     #user_input = int(input("     Type 1 for multiple times VNS.\n"))
@@ -158,8 +185,6 @@ def main():
             ga_avg_performance += performance_before
             ga_avg_diameter += ga_diameter
 
-            GA_end_time = time.time()
-
             #display(grid, sink, sinked_relays, sinked_sentinels, title="Genetic Algorithm")
             print('Starting the main algorithm now!!')
 
@@ -203,19 +228,16 @@ def main():
 
             end_time = time.time()
             # GET TIME
-            total_time = int(GA_end_time - start_time)
-            execution_times.append(total_time)
-            hours, remainder = divmod(total_time, 3600)
-            minutes, remainder = divmod(remainder, 60)
-            GA_time_string = f"{hours:02.0f}H_{minutes:02.0f}M_{remainder:02.0f}S"
-
             total_time = int(end_time - start_time)
             execution_times.append(total_time)
             hours, remainder = divmod(total_time, 3600)
             minutes, remainder = divmod(remainder, 60)
             time_string = f"{hours:02.0f}H_{minutes:02.0f}M_{remainder:02.0f}S"
 
-            print(f'GA Execution time: {GA_time_string}')
+            stats_file = os.path.join("Initial solutions", f"genetic_statistics_{int(grid/20)}.json")
+            with open(stats_file, "r") as f:
+                stats = json.load(f)
+            GA_time_string = stats["execution_time"]
             print(f'Execution time: {time_string}')
 
         simulation_end_time = time.time()
