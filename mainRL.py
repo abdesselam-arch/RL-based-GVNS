@@ -140,7 +140,7 @@ def main():
     if get_in:
         
         # If needed to change the grid size or sink location, change the parameters here
-        grid_size = 13
+        grid_size = 11
         sink_location = 1  # 1: center, 2: top left, 3: top right, 4: bottom left, 5: bottom right
         
         grid, sink, sinkless_sentinels, free_slots = create(grid_size, sink_location)
@@ -203,7 +203,7 @@ def main():
             ga_avg_performance += performance_before
             ga_avg_diameter += ga_diameter
 
-            display(grid, sink, sinked_relays, sinked_sentinels, title="Genetic Algorithm")
+            # display(grid, sink, sinked_relays, sinked_sentinels, title="Genetic Algorithm")
             print('Starting the main algorithm now!!')
 
             if Gvns_or_RLGVNS == 1:
