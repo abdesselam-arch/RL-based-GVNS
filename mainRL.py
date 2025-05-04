@@ -9,25 +9,37 @@ from PersonalModules.generalVNS import GVNS
 from PersonalModules.utilities import bellman_ford, dijkstra, display, get_Diameter, get_stat, len_sinked_relays
 
 
-def create(chosen_grid, sink_location, ):
+def create(chosen_grid, sink_location):
     free_slots = []
 
     # Create a grid
-    # chosen_grid = int(input("Choose your grid size: "))
     print("You chose the grid's size to be: ", chosen_grid, "*", chosen_grid)
     grid = chosen_grid * 20
+    print("Grid size: ", grid)
+    print("Sink location: ", sink_location)
 
     # Create a sink
-    # sink_location = int(input("\nDo you want the sink in the middle of the grid? (Type 0 to choose a custom location) "))
-    if sink_location == 0:
-        sink_X_Axis = int(input("Enter the X coordinate of the sink."))
-        sink_Y_Axis = int(input("Now enter the Y coordinate of the sink."))
-        sink = (sink_X_Axis, sink_Y_Axis)
-    else:
+    if sink_location == 1:  # center
         if (chosen_grid % 2) == 0:
             sink = ((grid / 2) + 10, (grid / 2) - 10)
         elif (chosen_grid % 2) == 1:
             sink = (((grid - 20) / 2) + 10, ((grid - 20) / 2) + 10)
+    elif sink_location == 2:  # top left
+        sink = (50, grid - 50)
+        print("Sink location: ", sink)
+    elif sink_location == 3:  # top right
+        sink = (grid - 50, grid - 50)
+        print("Sink location: ", sink)
+    elif sink_location == 4:  # bottom left
+        sink = (50, 50)
+        print("Sink location: ", sink)
+    elif sink_location == 5:  # bottom right
+        sink = (grid - 50, 50)
+        print("Sink location: ", sink)
+    else:
+        # Default sink location if sink_location is invalid
+        print("Invalid sink location. Defaulting to center.")
+        sink = ((grid / 2) + 10, (grid / 2) - 10)
 
     # Create sentinels
     sinkless_sentinels = [(x, 10) for x in range(10, grid + 10, 20)] + \
@@ -63,10 +75,12 @@ def get_ordinal_number(n):
     tf = eng.isprime(x)
     return tf'''
 
-def initial_solution(grid, sink, sinkless_sentinels, free_slots, max_hops_number):
+def initial_solution(grid, sink, sinkless_sentinels, free_slots, max_hops_number, sink_location):
     genetic_free_slots = []
 
-    folder_path = "Initial solutions"
+    print("You chose the grid's size to be: ", grid, "*", grid)
+    print("You chose the sink's location to be: ", sink_location)
+    folder_path = f"Initial solutions {sink_location}"
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
@@ -124,8 +138,12 @@ def main():
     get_in = True
     # Create everything
     if get_in:
+        
         # If needed to change the grid size or sink location, change the parameters here
-        grid, sink, sinkless_sentinels, free_slots = create(17, 1)
+        grid_size = 13
+        sink_location = 1  # 1: center, 2: top left, 3: top right, 4: bottom left, 5: bottom right
+        
+        grid, sink, sinkless_sentinels, free_slots = create(grid_size, sink_location)
         max_hops_number = grid
 
     #user_input = int(input("     Type 1 for multiple times VNS.\n"))
@@ -162,7 +180,7 @@ def main():
             start_time = time.time()
             # Generate the initial solution using greedy algorithm
             print("\nFixed Initial solution given by genetic ")
-            genetic_sinked_sentinels, genetic_sinked_relays, genetic_free_slots = initial_solution(grid/20, sink, sinkless_sentinels, free_slots, max_hops_number+1)
+            genetic_sinked_sentinels, genetic_sinked_relays, genetic_free_slots = initial_solution(grid/20, sink, sinkless_sentinels, free_slots, max_hops_number+1, sink_location)
             print("---------------------------------------")
 
             # Get the performance before VNS, perform VNS then Get the performance after VNS
@@ -185,14 +203,14 @@ def main():
             ga_avg_performance += performance_before
             ga_avg_diameter += ga_diameter
 
-            #display(grid, sink, sinked_relays, sinked_sentinels, title="Genetic Algorithm")
+            display(grid, sink, sinked_relays, sinked_sentinels, title="Genetic Algorithm")
             print('Starting the main algorithm now!!')
 
             if Gvns_or_RLGVNS == 1:
                 sinked_relays, free_slots = GVNS(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, max_iterations=1, alpha=0.5, beta=0.5, gen_diameter=ga_diameter)
                 print("   General Variable Neighborhood Search algorithm finished execution successfully !")
             else:    
-                sinked_relays, free_slots = UCB_VND(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, lmax=5, alpha=0.5, beta=0.5)
+                sinked_relays, free_slots = UCB_VND(grid, sink, sinked_sentinels, sinked_relays, free_slots, 30, 20, lmax=5, alpha=0.5, beta=0.5, gen_diameter=ga_diameter)
                 print("   Upper Confidence Bounde + General Variable Neighborhood Search algorithm finished execution successfully !")
 
             print("\n   Please wait until some calculations are finished...")
@@ -234,7 +252,7 @@ def main():
             minutes, remainder = divmod(remainder, 60)
             time_string = f"{hours:02.0f}H_{minutes:02.0f}M_{remainder:02.0f}S"
 
-            stats_file = os.path.join("Initial solutions", f"genetic_statistics_{int(grid/20)}.json")
+            stats_file = os.path.join(f"Initial solutions {sink_location}", f"genetic_statistics_{int(grid/20)}.json")
             with open(stats_file, "r") as f:
                 stats = json.load(f)
             GA_time_string = stats["execution_time"]
